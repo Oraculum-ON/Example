@@ -1,0 +1,5 @@
+{
+    "require": {
+        "oraculum-on/on": "dev-master"
+    }
+}
