@@ -1,12 +1,11 @@
 <?php
-    use Oraculum\Alias;
-use Oraculum\App;
-use Oraculum\DBO;
-use Oraculum\Model;
-use Oraculum\Register;
-use Oraculum\Request;
+  use Oraculum\Alias;
+  use Oraculum\App;
+  use Oraculum\Model;
+  use Oraculum\Register;
+  use Oraculum\Request;
 
-$bancos = PDO::getAvailableDrivers();
+  $bancos = PDO::getAvailableDrivers();
     Register::set('bancos', $bancos);
     define('NL', "\n\r\t");
     $firstkey = null;
@@ -41,10 +40,9 @@ $bancos = PDO::getAvailableDrivers();
                                 '@'.$servidor.'/'.$base);
                 endif;
                 $db->PDO();
-                $dbo = new DBO(null);
                 if ($banco != 'sqlite'):
-                    DBO::execSQL('USE '.$base.';');
-                $query = DBO::execSQL('SHOW KEYS FROM '.$tabela.
+                    Model::execSQL('USE '.$base.';');
+                $query = Model::execSQL('SHOW KEYS FROM '.$tabela.
                                         ' WHERE Key_name = \'PRIMARY\';')
                         ->fetchAll();
                 $keys = [];
@@ -55,7 +53,7 @@ $bancos = PDO::getAvailableDrivers();
                 $keys[] = $r['Column_name'];
                 endforeach;
                 $keys = 'array(\''.implode('\',\'', $keys).'\')'; else:
-                    $query = DBO::execSQL('PRAGMA table_info(\''.$tabela.'\');')
+                    $query = Model::execSQL('PRAGMA table_info(\''.$tabela.'\');')
                         ->fetchAll();
                 $keys = [$query[0]['name']];
                 $keys = 'array(\''.implode('\',\'', $keys).'\')';
@@ -68,12 +66,12 @@ $bancos = PDO::getAvailableDrivers();
                             'use Oraculum\HTTP;'.NL.
                             'use Oraculum\Register;'.NL.
                             'use Oraculum\Adds;'.NL.
-                            'use Oraculum\\'.ucwords($tabela).' as '.ucwords($tabela).';'.NL.NL.
+                            'use Oraculum\Tables\\'.ucwords($tabela).';'.NL.NL.
 
                             '// Carrega o arquivo de conexao com o banco'.NL.
                             '$db=new Model(\''.$banco.'\');'.NL.NL.
                             '// Carrega dinamicamente uma classe para a tabela '.$tabela.NL.
-                            '$db->loadModelClass(\''.$tabela.'\');'.NL.
+                            '$db->loadTable(\''.$tabela.'\');'.NL.
                             '$action=Request::getvar(\''.$arquivo.'\');'.NL.NL.
                             '// Verifica se a acao e\' permitida no sistema'.NL.
                             'if (!(in_array($action, array(\'cadastrar\', \'listar\', \'alterar\', \'excluir\'))))'.NL.
